@@ -6,14 +6,14 @@ const controller = require("../controllers/user.controller");
 
 // Create user
 router.post("/signup", controller.createUser);
-// Login
-// router.post("/login", controller.login);
+//Login
+router.post("/login", controller.login);
 //Update inform user
 // router.post("/update", upload.single("file"), controller.updateInfoUser);
 // // Get detal data user
 // router.get("/user/:id", controller.detailUser);
-// // Check logged in?
-// router.post("/checklogin", controller.checkLoggedIn);
+// Check logged in?
+router.post("/checklogin", controller.checkLoggedIn);
 // // Fotgot pass
 // router.post("/forgot", controller.fogotPass);
 

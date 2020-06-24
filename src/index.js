@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const userRouter = require("./routers/users.router");
+const financeRouter = require("./routers/finance.router");
 
 const port = 8080;
 
@@ -33,6 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 // End  point
 app.use("/users", userRouter);
+app.use("/finance", financeRouter);
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
