@@ -5,7 +5,8 @@ let userSchema = new mongoose.Schema(
     name: String,
     email: String,
     avatarUrl: String,
-    password: String
+    password: String,
+    codeMoney: String
   },
   {
     timestamps: true
