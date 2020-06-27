@@ -1,5 +1,6 @@
 const Finances = require("../models/finance.model");
 const mongoose = require("mongoose");
+let dayNow = require("../FunctionGetDayOfWeek/FunctionGetDayOfWeek");
 
 // income
 module.exports.Income = async function(req, res) {
@@ -84,11 +85,18 @@ module.exports.getExpense = async function(req, res) {
   const id = req.params.id;
   const finance = await Finances.findOne({ idUser: id });
   const expense = finance.expense;
+  const sortExpense = expense.sort(function(a, b) {
+    let time1 = new Date(a.time);
+    let time2 = new Date(b.time);
+    let getTime1 = time1.getTime();
+    let getTime2 = time2.getTime();
+    return getTime2 - getTime1;
+  });
   let arri = [];
-  for (let i = 0; i < expense.length; i++) {
-    if (expense[i + 1] !== undefined) {
-      let time1 = new Date(expense[i].time);
-      let time2 = new Date(expense[i + 1].time);
+  for (let i = 0; i < sortExpense.length; i++) {
+    if (sortExpense[i + 1] !== undefined) {
+      let time1 = new Date(sortExpense[i].time);
+      let time2 = new Date(sortExpense[i + 1].time);
       let date1 = time1.getDate();
       let date2 = time2.getDate();
       if (date1 !== date2) {
@@ -98,7 +106,7 @@ module.exports.getExpense = async function(req, res) {
   }
 
   let arrExpense = [];
-  let arrFrist = expense.slice(0, arri[1] - 1);
+  let arrFrist = sortExpense.slice(0, arri[0] + 1);
   let time = arrFrist[0].time;
   let ojFrist = {
     time: time,
@@ -108,7 +116,7 @@ module.exports.getExpense = async function(req, res) {
 
   for (let i = 0; i < arri.length; i++) {
     if (arri[i + 1] === undefined) {
-      let arrFinal = expense.slice(arri[i] + 1);
+      let arrFinal = sortExpense.slice(arri[i] + 1);
       let time = arrFinal[0].time;
       let ojFinal = {
         time: time,
@@ -116,7 +124,7 @@ module.exports.getExpense = async function(req, res) {
       };
       arrExpense.push(ojFinal);
     } else {
-      let arrAmong = expense.slice(arri[i] + 1, arri[i + 1] + 1);
+      let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
       let time = arrAmong[0].time;
       let ojAmong = {
         time: time,
@@ -128,3 +136,274 @@ module.exports.getExpense = async function(req, res) {
   res.json(arrExpense);
 };
 // get data chart line
+module.exports.getDataChartLine = async function(req, res) {
+  const id = req.params.id;
+  const now = new Date();
+  const day = now.getDay();
+  const month = now.getMonth();
+  const pevMonth = month - 1;
+
+  const finance = await Finances.findOne({ idUser: id });
+  const expense = finance.expense;
+  let dateOfWeek = dayNow.dayWeek(day);
+
+  let dataWeek = [];
+
+  for (let date of dateOfWeek) {
+    for (let exp of expense) {
+      let time = new Date(exp.time);
+      let getDate = time.getDate();
+      let getMonth = time.getMonth();
+      if (
+        (getDate === date && getMonth === month) ||
+        (getDate === date && getMonth === pevMonth)
+      ) {
+        dataWeek.push(exp);
+      }
+    }
+  }
+
+  let arri = [];
+  for (let i = 0; i < dataWeek.length; i++) {
+    if (dataWeek[i + 1] !== undefined) {
+      let time1 = new Date(dataWeek[i].time);
+      let time2 = new Date(dataWeek[i + 1].time);
+      let date1 = time1.getDate();
+      let date2 = time2.getDate();
+
+      if (date1 !== date2) {
+        arri.push(i);
+      }
+    }
+  }
+
+  let dataEachDateOfWeek = [];
+  let arrFrist = dataWeek.slice(0, arri[0] + 1);
+  dataEachDateOfWeek.push(arrFrist);
+
+  for (let i = 0; i < arri.length; i++) {
+    if (arri[i + 1] === undefined) {
+      let arrFinal = dataWeek.slice(arri[i] + 1);
+      dataEachDateOfWeek.push(arrFinal);
+    } else {
+      let arrAmong = dataWeek.slice(arri[i] + 1, arri[i + 1] + 1);
+      dataEachDateOfWeek.push(arrAmong);
+    }
+  }
+  const sumDateOfWeek = dataEachDateOfWeek.map(function(a) {
+    if (Array.isArray(a) === true) {
+      let time = a[0].time;
+      let changeArr = a.map(function(b) {
+        return b.amount;
+      });
+      let sum = changeArr.reduce(function(c, d) {
+        return c + d;
+      }, 0);
+      return { time: time, sumAmont: sum };
+    } else {
+      return a;
+    }
+  });
+
+  let reverseArr = sumDateOfWeek.reverse();
+  let mapReverseArr = reverseArr.map(function(sumAndtime) {
+    let timeSum = new Date(sumAndtime.time);
+    let daySum = timeSum.getDay();
+    return daySum;
+  });
+  let arrDayOfWeek = [1, 2, 3, 4, 5, 6, 0];
+
+  let mapArrDayOfWeek = arrDayOfWeek.map(function(day) {
+    if (mapReverseArr.includes(day) === true) {
+      return day;
+    } else {
+      return null;
+    }
+  });
+
+  for (let timeAndSum of reverseArr) {
+    let time = new Date(timeAndSum.time);
+    let daySum = time.getDay();
+    let sumAmont = timeAndSum.sumAmont;
+    let indexOf = mapArrDayOfWeek.indexOf(daySum);
+    mapArrDayOfWeek.splice(indexOf, 1, sumAmont);
+  }
+  res.json(mapArrDayOfWeek);
+};
+// get data doughnut
+
+module.exports.getDataDoughnut = async function(req, res) {
+  const id = req.params.id;
+  const finance = await Finances.findOne({ idUser: id });
+  const expense = finance.expense;
+
+  const mapExpense = expense.map(function(a) {
+    return a.amount;
+  });
+  const sumExpense = mapExpense.reduce(function(a, b) {
+    return a + b;
+  });
+
+  const sortExpense = expense.sort(function(a, b) {
+    let c = a.title;
+    let d = b.title;
+    return c.localeCompare(d);
+  });
+  let arri = [];
+  for (let i = 0; i < sortExpense.length; i++) {
+    if (sortExpense[i + 1] !== undefined) {
+      let title1 = sortExpense[i].title;
+      let title2 = sortExpense[i + 1].title;
+      if (title1 !== title2) {
+        arri.push(i);
+      }
+    }
+  }
+
+  let dataFollowTitle = [];
+  let arrFrist = sortExpense.slice(0, arri[0] + 1);
+  dataFollowTitle.push(arrFrist);
+
+  for (let i = 0; i < arri.length; i++) {
+    if (arri[i + 1] === undefined) {
+      let arrFinal = sortExpense.slice(arri[i] + 1);
+      dataFollowTitle.push(arrFinal);
+    } else {
+      let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
+      dataFollowTitle.push(arrAmong);
+    }
+  }
+
+  const sumFollowTitle = dataFollowTitle.map(function(a) {
+    if (Array.isArray(a) === true) {
+      let time = a[0].time;
+      let title = a[0].title;
+      let color = a[0].color;
+      let className = a[0].className;
+      let changeArr = a.map(function(b) {
+        return b.amount;
+      });
+      let sum = changeArr.reduce(function(c, d) {
+        return c + d;
+      }, 0);
+      return {
+        time: time,
+        sumAmont: sum,
+        title: title,
+        color: color,
+        className: className
+      };
+    } else {
+      return a;
+    }
+  });
+
+  const mapPercentPerTotal = sumFollowTitle.map(function(data) {
+    let sumAmont = data.sumAmont;
+    let percentSumAmont = (sumAmont / sumExpense) * 100;
+    let percentSumAmontFixed = Math.round(percentSumAmont);
+    return {
+      time: data.time,
+      percentSumAmont: percentSumAmontFixed,
+      title: data.title,
+      color: data.color,
+      className: data.className
+    };
+  });
+
+  res.json(mapPercentPerTotal);
+};
+
+// get data chart bar
+module.exports.getDataCharBar = async function(req, res) {
+  const id = req.params.id;
+  const now = new Date();
+  const year = now.getFullYear();
+  const finance = await Finances.findOne({ idUser: id });
+  const expense = finance.expense;
+  const sortExpense = expense.sort(function(a, b) {
+    let time1 = new Date(a.time);
+    let time2 = new Date(b.time);
+    let getTime1 = time1.getTime();
+    let getTime2 = time2.getTime();
+    return getTime2 - getTime1;
+  });
+
+  const filterFollowYear = sortExpense.filter(function(data) {
+    let time = new Date(data.time);
+    let getYear = time.getFullYear();
+    if (getYear === year) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  let arri = [];
+  for (let i = 0; i < filterFollowYear.length; i++) {
+    if (filterFollowYear[i + 1] !== undefined) {
+      let time1 = new Date(filterFollowYear[i].time);
+      let time2 = new Date(filterFollowYear[i + 1].time);
+      let getMonth1 = time1.getMonth();
+      let getMonth2 = time2.getMonth();
+      if (getMonth1 !== getMonth2) {
+        arri.push(i);
+      }
+    }
+  }
+
+  let dataFollowMonth = [];
+  let arrFrist = filterFollowYear.slice(0, arri[0] + 1);
+  dataFollowMonth.push(arrFrist);
+
+  for (let i = 0; i < arri.length; i++) {
+    if (arri[i + 1] === undefined) {
+      let arrFinal = filterFollowYear.slice(arri[i] + 1);
+      dataFollowMonth.push(arrFinal);
+    } else {
+      let arrAmong = filterFollowYear.slice(arri[i] + 1, arri[i + 1] + 1);
+      dataFollowMonth.push(arrAmong);
+    }
+  }
+
+  const sumDateOfMonth = dataFollowMonth.map(function(a) {
+    if (Array.isArray(a) === true) {
+      let time = a[0].time;
+      let changeArr = a.map(function(b) {
+        return b.amount;
+      });
+      let sum = changeArr.reduce(function(c, d) {
+        return c + d;
+      }, 0);
+      return { time: time, sumMonth: sum };
+    } else {
+      return a;
+    }
+  });
+
+  let mapArrMonth = sumDateOfMonth.map(function(sumAndtime) {
+    let timeSum = new Date(sumAndtime.time);
+    let monthSum = timeSum.getMonth();
+    return monthSum;
+  });
+
+  let arrDayOfMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+  let mapArrDayOfMonth = arrDayOfMonth.map(function(month) {
+    if (mapArrMonth.includes(month) === true) {
+      return month;
+    } else {
+      return null;
+    }
+  });
+
+  for (let timeAndSum of sumDateOfMonth) {
+    let time = new Date(timeAndSum.time);
+    let monthSum = time.getMonth();
+    let sumMonth = timeAndSum.sumMonth;
+    let indexOf = mapArrDayOfMonth.indexOf(monthSum);
+    mapArrDayOfMonth.splice(indexOf, 1, sumMonth);
+  }
+
+  res.json(mapArrDayOfMonth);
+};
