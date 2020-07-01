@@ -77,3 +77,54 @@ module.exports.checkLoggedIn = async function(req, res) {
 
   res.json(user);
 };
+// Update inform user
+module.exports.updateInfoUser = async function(req, res) {
+  const body = req.body;
+
+  if (req.file !== undefined) {
+    const path = req.file.path;
+    let result = await cloudinary.uploader.upload(path, function(
+      error,
+      result
+    ) {
+      console.log(error);
+    });
+    const avatarUrl = result.url;
+    await Users.findByIdAndUpdate(
+      { _id: body._id },
+      {
+        $set: { avatarUrl: avatarUrl }
+      }
+    );
+  }
+  if (body.name !== "" && body.name !== "undefined") {
+    const name = body.name;
+    await Users.findByIdAndUpdate(
+      { _id: body._id },
+      {
+        $set: { name: name }
+      }
+    );
+  }
+  if (body.email !== "" && body.email !== "undefined") {
+    const email = body.email;
+    await Users.findByIdAndUpdate(
+      { _id: body._id },
+      {
+        $set: { email: email }
+      }
+    );
+  }
+  if (body.pass !== "undefined" && body.pass !== "") {
+    const pass = body.pass;
+    const password = bcrypt.hashSync(pass, 10);
+    await Users.findByIdAndUpdate(
+      { _id: body._id },
+      {
+        $set: { password: password }
+      }
+    );
+  }
+
+  res.json(body);
+};

@@ -6,7 +6,7 @@ let userSchema = new mongoose.Schema(
     email: String,
     avatarUrl: String,
     password: String,
-    codeMoney: String
+    defaulCurrency: String
   },
   {
     timestamps: true

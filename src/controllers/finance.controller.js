@@ -22,6 +22,7 @@ module.exports.Income = async function(req, res) {
     },
     { upsert: true, new: true, runValidators: true }
   );
+  res.json(income);
 };
 // expense
 module.exports.Expense = async function(req, res) {
@@ -56,9 +57,11 @@ module.exports.Expense = async function(req, res) {
 
 module.exports.Balance = async function(req, res) {
   const id = req.params.id;
-
+  const now = new Date();
+  const monthNow = now.getMonth();
+  const dateNow = now.getDate();
+  const yearNow = now.getFullYear();
   const finance = await Finances.findOne({ idUser: id });
-
   const income = finance.income;
   const mapIncome = income.map(function(a) {
     return a.amount;
@@ -66,7 +69,6 @@ module.exports.Balance = async function(req, res) {
   const sumIncome = mapIncome.reduce(function(a, b) {
     return a + b;
   });
-
   const expense = finance.expense;
   const mapExpense = expense.map(function(a) {
     return a.amount;
@@ -77,7 +79,51 @@ module.exports.Balance = async function(req, res) {
 
   const balance = sumIncome - sumExpense;
 
-  res.json(balance);
+  const filterExpenseMonth = expense.filter(function(a) {
+    const time = new Date(a.time);
+    const getMonth = time.getMonth();
+    const getYear = time.getFullYear();
+    if (getMonth === monthNow && getYear === yearNow) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  const amountExpenseThisMonth = filterExpenseMonth.map(function(a) {
+    return a.amount;
+  });
+  const sumExpenseThisMonth = amountExpenseThisMonth.reduce(function(a, b) {
+    return a + b;
+  }, 0);
+
+  const fillterExpenseToday = expense.filter(function(a) {
+    const time = new Date(a.time);
+    const getMonth = time.getMonth();
+    const getYear = time.getFullYear();
+    const getDate = time.getDate();
+    if (getMonth === monthNow && getYear === yearNow && getDate === dateNow) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  const mapExpenseToDay = fillterExpenseToday.map(function(a) {
+    return a.amount;
+  });
+  const sumExpenseToDay = mapExpenseToDay.reduce(function(a, b) {
+    return a + b;
+  }, 0);
+
+  const all = [
+    sumIncome,
+    sumExpense,
+    balance,
+    sumExpenseThisMonth,
+    sumExpenseToDay
+  ];
+
+  res.json(all);
 };
 // get Expense
 
@@ -176,59 +222,74 @@ module.exports.getDataChartLine = async function(req, res) {
       }
     }
   }
+  //// if arri = []
+  if (arri.length === 0) {
+    const mapDataWeek = dataWeek.map(function(a) {
+      return a.amount;
+    });
+    const sumDataWeek = mapDataWeek.reduce(function(a, b) {
+      return a + b;
+    }, 0);
 
-  let dataEachDateOfWeek = [];
-  let arrFrist = dataWeek.slice(0, arri[0] + 1);
-  dataEachDateOfWeek.push(arrFrist);
+    let arrDayOfWeek = [0, null, null, null, null, null, null];
 
-  for (let i = 0; i < arri.length; i++) {
-    if (arri[i + 1] === undefined) {
-      let arrFinal = dataWeek.slice(arri[i] + 1);
-      dataEachDateOfWeek.push(arrFinal);
-    } else {
-      let arrAmong = dataWeek.slice(arri[i] + 1, arri[i + 1] + 1);
-      dataEachDateOfWeek.push(arrAmong);
+    arrDayOfWeek.splice(0, 1, sumDataWeek);
+
+    res.json(arrDayOfWeek);
+  } else {
+    let dataEachDateOfWeek = [];
+    let arrFrist = dataWeek.slice(0, arri[0] + 1);
+    dataEachDateOfWeek.push(arrFrist);
+
+    for (let i = 0; i < arri.length; i++) {
+      if (arri[i + 1] === undefined) {
+        let arrFinal = dataWeek.slice(arri[i] + 1);
+        dataEachDateOfWeek.push(arrFinal);
+      } else {
+        let arrAmong = dataWeek.slice(arri[i] + 1, arri[i + 1] + 1);
+        dataEachDateOfWeek.push(arrAmong);
+      }
     }
+    const sumDateOfWeek = dataEachDateOfWeek.map(function(a) {
+      if (Array.isArray(a) === true) {
+        let time = a[0].time;
+        let changeArr = a.map(function(b) {
+          return b.amount;
+        });
+        let sum = changeArr.reduce(function(c, d) {
+          return c + d;
+        }, 0);
+        return { time: time, sumAmont: sum };
+      } else {
+        return a;
+      }
+    });
+
+    let reverseArr = sumDateOfWeek.reverse();
+    let mapReverseArr = reverseArr.map(function(sumAndtime) {
+      let timeSum = new Date(sumAndtime.time);
+      let daySum = timeSum.getDay();
+      return daySum;
+    });
+    let arrDayOfWeek = [1, 2, 3, 4, 5, 6, 0];
+
+    let mapArrDayOfWeek = arrDayOfWeek.map(function(day) {
+      if (mapReverseArr.includes(day) === true) {
+        return day;
+      } else {
+        return null;
+      }
+    });
+
+    for (let timeAndSum of reverseArr) {
+      let time = new Date(timeAndSum.time);
+      let daySum = time.getDay();
+      let sumAmont = timeAndSum.sumAmont;
+      let indexOf = mapArrDayOfWeek.indexOf(daySum);
+      mapArrDayOfWeek.splice(indexOf, 1, sumAmont);
+    }
+    res.json(mapArrDayOfWeek);
   }
-  const sumDateOfWeek = dataEachDateOfWeek.map(function(a) {
-    if (Array.isArray(a) === true) {
-      let time = a[0].time;
-      let changeArr = a.map(function(b) {
-        return b.amount;
-      });
-      let sum = changeArr.reduce(function(c, d) {
-        return c + d;
-      }, 0);
-      return { time: time, sumAmont: sum };
-    } else {
-      return a;
-    }
-  });
-
-  let reverseArr = sumDateOfWeek.reverse();
-  let mapReverseArr = reverseArr.map(function(sumAndtime) {
-    let timeSum = new Date(sumAndtime.time);
-    let daySum = timeSum.getDay();
-    return daySum;
-  });
-  let arrDayOfWeek = [1, 2, 3, 4, 5, 6, 0];
-
-  let mapArrDayOfWeek = arrDayOfWeek.map(function(day) {
-    if (mapReverseArr.includes(day) === true) {
-      return day;
-    } else {
-      return null;
-    }
-  });
-
-  for (let timeAndSum of reverseArr) {
-    let time = new Date(timeAndSum.time);
-    let daySum = time.getDay();
-    let sumAmont = timeAndSum.sumAmont;
-    let indexOf = mapArrDayOfWeek.indexOf(daySum);
-    mapArrDayOfWeek.splice(indexOf, 1, sumAmont);
-  }
-  res.json(mapArrDayOfWeek);
 };
 // get data doughnut
 
@@ -406,4 +467,13 @@ module.exports.getDataCharBar = async function(req, res) {
   }
 
   res.json(mapArrDayOfMonth);
+};
+// get Income
+
+module.exports.getIncome = async function(req, res) {
+  const id = req.params.id;
+  const finance = await Finances.findOne({ idUser: id });
+  const income = finance.income;
+
+  res.json(income);
 };

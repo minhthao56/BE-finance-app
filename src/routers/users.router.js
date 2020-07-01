@@ -8,8 +8,8 @@ const controller = require("../controllers/user.controller");
 router.post("/signup", controller.createUser);
 //Login
 router.post("/login", controller.login);
-//Update inform user
-// router.post("/update", upload.single("file"), controller.updateInfoUser);
+// Update inform user
+router.post("/update", upload.single("file"), controller.updateInfoUser);
 // // Get detal data user
 // router.get("/user/:id", controller.detailUser);
 // Check logged in?

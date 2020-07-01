@@ -17,5 +17,7 @@ router.get("/get/chartline/:id", controller.getDataChartLine);
 router.get("/get/doughnut/:id", controller.getDataDoughnut);
 //get chart Bar
 router.get("/get/charbar/:id", controller.getDataCharBar);
+// get Income
+router.get("/income/:id", controller.getIncome);
 
 module.exports = router;
