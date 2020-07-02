@@ -4,6 +4,7 @@ const cloudinary = require("cloudinary").v2;
 const jwt = require("jsonwebtoken");
 const TOKEN_SECRET = "weojdjkfjowewejfwefjiwewefj";
 const sgMail = require("@sendgrid/mail");
+const shortid = require("shortid");
 // const shortid = require("shortid");
 const Finances = require("../models/finance.model");
 sgMail.setApiKey(
@@ -69,7 +70,7 @@ module.exports.login = async function(req, res) {
 module.exports.checkLoggedIn = async function(req, res) {
   const token = req.body.token;
 
-  if (token === "") {
+  if (!token) {
     return;
   }
   const verified = jwt.verify(token, TOKEN_SECRET);
@@ -138,4 +139,28 @@ module.exports.addCurrencyDefault = async function(req, res) {
     }
   );
   res.json(User);
+};
+// Forget password
+module.exports.fogotPass = async function(req, res) {
+  const email = req.body.email;
+
+  const pass = shortid.generate();
+  const password = bcrypt.hashSync(pass, 10);
+  const msg = {
+    to: email,
+    from: "minhthao1111@outlook.com",
+    subject: "New Password",
+    text: "You should check your accout and change your password right now.",
+    html: "New your passwor is " + pass
+  };
+
+  await Users.findOneAndUpdate(
+    {
+      email: email
+    },
+    { $set: { password: password } }
+  );
+  await sgMail.send(msg);
+
+  res.json("ok nha");
 };

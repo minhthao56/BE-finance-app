@@ -12,7 +12,8 @@ router.post("/login", controller.login);
 router.post("/update", upload.single("file"), controller.updateInfoUser);
 // Check logged in?
 router.post("/checklogin", controller.checkLoggedIn);
-// // Fotgot pass
-// router.post("/forgot", controller.fogotPass);
+// Fotgot pass
+router.post("/forgot", controller.fogotPass);
+// Choose default currency
 router.post("/currency", controller.addCurrencyDefault);
 module.exports = router;
