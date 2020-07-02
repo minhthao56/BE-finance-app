@@ -10,11 +10,9 @@ router.post("/signup", controller.createUser);
 router.post("/login", controller.login);
 // Update inform user
 router.post("/update", upload.single("file"), controller.updateInfoUser);
-// // Get detal data user
-// router.get("/user/:id", controller.detailUser);
 // Check logged in?
 router.post("/checklogin", controller.checkLoggedIn);
 // // Fotgot pass
 // router.post("/forgot", controller.fogotPass);
-
+router.post("/currency", controller.addCurrencyDefault);
 module.exports = router;

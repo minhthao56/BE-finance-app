@@ -20,11 +20,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -47,11 +47,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -73,11 +73,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 2 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -101,11 +101,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -126,11 +126,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 2 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -151,11 +151,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 3 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -179,11 +179,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -204,11 +204,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 2 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -229,11 +229,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 3 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -256,11 +256,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 4 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -284,11 +284,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -309,11 +309,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 2 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -334,11 +334,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 3 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -361,11 +361,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 4 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -394,11 +394,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 5 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -422,11 +422,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 1 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -447,11 +447,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 2 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -472,11 +472,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 3 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -499,11 +499,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 4 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -532,11 +532,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 5 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {
@@ -572,11 +572,11 @@ module.exports.dayWeek = function(dayNow) {
     if (date - 6 === 0) {
       if (
         month === 0 ||
-        month === 2 ||
-        month === 4 ||
-        month === 6 ||
-        month === 9 ||
-        month === 11
+        month === 1 ||
+        month === 3 ||
+        month === 7 ||
+        month === 8 ||
+        month === 10
       ) {
         dayWeek.push(31);
       } else if (month === 1 && year % 4 === 0) {

@@ -68,14 +68,14 @@ module.exports.Balance = async function(req, res) {
   });
   const sumIncome = mapIncome.reduce(function(a, b) {
     return a + b;
-  });
+  }, 0);
   const expense = finance.expense;
   const mapExpense = expense.map(function(a) {
     return a.amount;
   });
   const sumExpense = mapExpense.reduce(function(a, b) {
     return a + b;
-  });
+  }, 0);
 
   const balance = sumIncome - sumExpense;
 
@@ -151,35 +151,46 @@ module.exports.getExpense = async function(req, res) {
     }
   }
 
-  let arrExpense = [];
-  let arrFrist = sortExpense.slice(0, arri[0] + 1);
-  let time = arrFrist[0].time;
-  let ojFrist = {
-    time: time,
-    data: arrFrist
-  };
-  arrExpense.push(ojFrist);
+  if (arri.length === 0) {
+    let arrExpense = [];
+    let time = sortExpense[0].time;
+    let ojExpense = {
+      time: time,
+      data: sortExpense
+    };
+    arrExpense.push(ojExpense);
+    res.json(arrExpense);
+  } else {
+    let arrExpense = [];
+    let arrFrist = sortExpense.slice(0, arri[0] + 1);
+    let time = arrFrist[0].time;
+    let ojFrist = {
+      time: time,
+      data: arrFrist
+    };
+    arrExpense.push(ojFrist);
 
-  for (let i = 0; i < arri.length; i++) {
-    if (arri[i + 1] === undefined) {
-      let arrFinal = sortExpense.slice(arri[i] + 1);
-      let time = arrFinal[0].time;
-      let ojFinal = {
-        time: time,
-        data: arrFinal
-      };
-      arrExpense.push(ojFinal);
-    } else {
-      let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
-      let time = arrAmong[0].time;
-      let ojAmong = {
-        time: time,
-        data: arrAmong
-      };
-      arrExpense.push(ojAmong);
+    for (let i = 0; i < arri.length; i++) {
+      if (arri[i + 1] === undefined) {
+        let arrFinal = sortExpense.slice(arri[i] + 1);
+        let time = arrFinal[0].time;
+        let ojFinal = {
+          time: time,
+          data: arrFinal
+        };
+        arrExpense.push(ojFinal);
+      } else {
+        let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
+        let time = arrAmong[0].time;
+        let ojAmong = {
+          time: time,
+          data: arrAmong
+        };
+        arrExpense.push(ojAmong);
+      }
     }
+    res.json(arrExpense);
   }
-  res.json(arrExpense);
 };
 // get data chart line
 module.exports.getDataChartLine = async function(req, res) {
@@ -303,7 +314,7 @@ module.exports.getDataDoughnut = async function(req, res) {
   });
   const sumExpense = mapExpense.reduce(function(a, b) {
     return a + b;
-  });
+  }, 0);
 
   const sortExpense = expense.sort(function(a, b) {
     let c = a.title;
@@ -320,59 +331,71 @@ module.exports.getDataDoughnut = async function(req, res) {
       }
     }
   }
-
-  let dataFollowTitle = [];
-  let arrFrist = sortExpense.slice(0, arri[0] + 1);
-  dataFollowTitle.push(arrFrist);
-
-  for (let i = 0; i < arri.length; i++) {
-    if (arri[i + 1] === undefined) {
-      let arrFinal = sortExpense.slice(arri[i] + 1);
-      dataFollowTitle.push(arrFinal);
-    } else {
-      let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
-      dataFollowTitle.push(arrAmong);
-    }
-  }
-
-  const sumFollowTitle = dataFollowTitle.map(function(a) {
-    if (Array.isArray(a) === true) {
-      let time = a[0].time;
-      let title = a[0].title;
-      let color = a[0].color;
-      let className = a[0].className;
-      let changeArr = a.map(function(b) {
-        return b.amount;
-      });
-      let sum = changeArr.reduce(function(c, d) {
-        return c + d;
-      }, 0);
+  if (arri.length === 0) {
+    const totalPercent = sortExpense.map(function(data) {
       return {
-        time: time,
-        sumAmont: sum,
-        title: title,
-        color: color,
-        className: className
+        time: data.time,
+        percentSumAmont: 100,
+        title: data.title,
+        color: data.color,
+        className: data.className
       };
-    } else {
-      return a;
+    });
+    res.json(totalPercent);
+  } else {
+    let dataFollowTitle = [];
+    let arrFrist = sortExpense.slice(0, arri[0] + 1);
+    dataFollowTitle.push(arrFrist);
+
+    for (let i = 0; i < arri.length; i++) {
+      if (arri[i + 1] === undefined) {
+        let arrFinal = sortExpense.slice(arri[i] + 1);
+        dataFollowTitle.push(arrFinal);
+      } else {
+        let arrAmong = sortExpense.slice(arri[i] + 1, arri[i + 1] + 1);
+        dataFollowTitle.push(arrAmong);
+      }
     }
-  });
 
-  const mapPercentPerTotal = sumFollowTitle.map(function(data) {
-    let sumAmont = data.sumAmont;
-    let percentSumAmont = (sumAmont / sumExpense) * 100;
-    let percentSumAmontFixed = Math.round(percentSumAmont);
-    return {
-      time: data.time,
-      percentSumAmont: percentSumAmontFixed,
-      title: data.title,
-      color: data.color,
-      className: data.className
-    };
-  });
+    const sumFollowTitle = dataFollowTitle.map(function(a) {
+      if (Array.isArray(a) === true) {
+        let time = a[0].time;
+        let title = a[0].title;
+        let color = a[0].color;
+        let className = a[0].className;
+        let changeArr = a.map(function(b) {
+          return b.amount;
+        });
+        let sum = changeArr.reduce(function(c, d) {
+          return c + d;
+        }, 0);
+        return {
+          time: time,
+          sumAmont: sum,
+          title: title,
+          color: color,
+          className: className
+        };
+      } else {
+        return a;
+      }
+    });
 
-  res.json(mapPercentPerTotal);
+    const mapPercentPerTotal = sumFollowTitle.map(function(data) {
+      let sumAmont = data.sumAmont;
+      let percentSumAmont = (sumAmont / sumExpense) * 100;
+      let percentSumAmontFixed = Math.round(percentSumAmont);
+      return {
+        time: data.time,
+        percentSumAmont: percentSumAmontFixed,
+        title: data.title,
+        color: data.color,
+        className: data.className
+      };
+    });
+
+    res.json(mapPercentPerTotal);
+  }
 };
 
 // get data chart bar
@@ -413,61 +436,91 @@ module.exports.getDataCharBar = async function(req, res) {
     }
   }
 
-  let dataFollowMonth = [];
-  let arrFrist = filterFollowYear.slice(0, arri[0] + 1);
-  dataFollowMonth.push(arrFrist);
+  if (arri.length === 0) {
+    const mapFilterFollowYear = filterFollowYear.map(function(data) {
+      return data.amount;
+    });
+    const sumFilterFollowYear = mapFilterFollowYear.reduce(function(a, b) {
+      return a + b;
+    }, 0);
+    const time = new Date(filterFollowYear[0].time);
+    const getMonth = time.getMonth();
 
-  for (let i = 0; i < arri.length; i++) {
-    if (arri[i + 1] === undefined) {
-      let arrFinal = filterFollowYear.slice(arri[i] + 1);
-      dataFollowMonth.push(arrFinal);
-    } else {
-      let arrAmong = filterFollowYear.slice(arri[i] + 1, arri[i + 1] + 1);
-      dataFollowMonth.push(arrAmong);
+    let arrDayOfMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    let mapArrDayOfMonth = arrDayOfMonth.map(function(month) {
+      if (month === getMonth) {
+        return month;
+      } else {
+        return null;
+      }
+    });
+
+    for (let month of mapArrDayOfMonth) {
+      if (month === getMonth) {
+        mapArrDayOfMonth.splice(month, 1, sumFilterFollowYear);
+      }
     }
+
+    res.json(mapArrDayOfMonth);
+  } else {
+    let dataFollowMonth = [];
+    let arrFrist = filterFollowYear.slice(0, arri[0] + 1);
+    dataFollowMonth.push(arrFrist);
+
+    for (let i = 0; i < arri.length; i++) {
+      if (arri[i + 1] === undefined) {
+        let arrFinal = filterFollowYear.slice(arri[i] + 1);
+        dataFollowMonth.push(arrFinal);
+      } else {
+        let arrAmong = filterFollowYear.slice(arri[i] + 1, arri[i + 1] + 1);
+        dataFollowMonth.push(arrAmong);
+      }
+    }
+
+    const sumDateOfMonth = dataFollowMonth.map(function(a) {
+      if (Array.isArray(a) === true) {
+        let time = a[0].time;
+        let changeArr = a.map(function(b) {
+          return b.amount;
+        });
+        let sum = changeArr.reduce(function(c, d) {
+          return c + d;
+        }, 0);
+        return { time: time, sumMonth: sum };
+      } else {
+        return a;
+      }
+    });
+
+    let mapArrMonth = sumDateOfMonth.map(function(sumAndtime) {
+      let timeSum = new Date(sumAndtime.time);
+      let monthSum = timeSum.getMonth();
+      return monthSum;
+    });
+
+    let arrDayOfMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    let mapArrDayOfMonth = arrDayOfMonth.map(function(month) {
+      if (mapArrMonth.includes(month) === true) {
+        return month;
+      } else {
+        return null;
+      }
+    });
+
+    for (let timeAndSum of sumDateOfMonth) {
+      let time = new Date(timeAndSum.time);
+      let monthSum = time.getMonth();
+      let sumMonth = timeAndSum.sumMonth;
+      let indexOf = mapArrDayOfMonth.indexOf(monthSum);
+      mapArrDayOfMonth.splice(indexOf, 1, sumMonth);
+    }
+
+    res.json(mapArrDayOfMonth);
   }
-
-  const sumDateOfMonth = dataFollowMonth.map(function(a) {
-    if (Array.isArray(a) === true) {
-      let time = a[0].time;
-      let changeArr = a.map(function(b) {
-        return b.amount;
-      });
-      let sum = changeArr.reduce(function(c, d) {
-        return c + d;
-      }, 0);
-      return { time: time, sumMonth: sum };
-    } else {
-      return a;
-    }
-  });
-
-  let mapArrMonth = sumDateOfMonth.map(function(sumAndtime) {
-    let timeSum = new Date(sumAndtime.time);
-    let monthSum = timeSum.getMonth();
-    return monthSum;
-  });
-
-  let arrDayOfMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
-  let mapArrDayOfMonth = arrDayOfMonth.map(function(month) {
-    if (mapArrMonth.includes(month) === true) {
-      return month;
-    } else {
-      return null;
-    }
-  });
-
-  for (let timeAndSum of sumDateOfMonth) {
-    let time = new Date(timeAndSum.time);
-    let monthSum = time.getMonth();
-    let sumMonth = timeAndSum.sumMonth;
-    let indexOf = mapArrDayOfMonth.indexOf(monthSum);
-    mapArrDayOfMonth.splice(indexOf, 1, sumMonth);
-  }
-
-  res.json(mapArrDayOfMonth);
 };
+
 // get Income
 
 module.exports.getIncome = async function(req, res) {

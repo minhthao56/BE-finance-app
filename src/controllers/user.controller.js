@@ -128,3 +128,14 @@ module.exports.updateInfoUser = async function(req, res) {
 
   res.json(body);
 };
+
+module.exports.addCurrencyDefault = async function(req, res) {
+  const body = req.body;
+  const User = await Users.findOneAndUpdate(
+    { _id: body.idUser },
+    {
+      $set: { defaultCurrency: body.sign }
+    }
+  );
+  res.json(User);
+};
